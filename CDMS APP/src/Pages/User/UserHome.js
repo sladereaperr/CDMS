@@ -10,7 +10,7 @@ const UserHome = () => {
 
   return (
     <div>
-      <ShowComplaint refresh={RefreshComponent} />
+      <ShowComplaint refresh={RefreshComponent} onDelete={onComplaintAdded} />
       <AddComplaint onComplaintAdded={onComplaintAdded} />
     </div>
   );

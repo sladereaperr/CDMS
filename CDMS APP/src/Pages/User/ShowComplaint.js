@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../../api/posts";
 import { useUser } from "../UserContext";
 
-const ShowComplaint = ({ refresh }) => {
+const ShowComplaint = ({ refresh, onDelete }) => {
   const [crimeData, setCrimeData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUser();
@@ -28,13 +28,12 @@ const ShowComplaint = ({ refresh }) => {
     };
 
     fetchCrimeData();
-  }, [refresh, user?.id]); // Refetch the data whenever refresh or user ID changes
+  }, [refresh, user?.id]);
 
   const handleDelete = async (crimeId) => {
     try {
-      await api.delete(`/UserHome/${crimeId}`); // Include the ID in the URL
-      // Update state to remove deleted crime directly
-      setCrimeData(crimeData.filter((crime) => crime.id !== crimeId));
+      await api.delete(`/UserHome/${crimeId}`);
+      onDelete();
     } catch (error) {
       console.error("Error deleting crime record:", error);
     }
@@ -54,44 +53,139 @@ const ShowComplaint = ({ refresh }) => {
         Crime Records
       </h2>
       {crimeData.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
-                  Exact Crime
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700 uppercase tracking-wider">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {crimeData.map((crime) => (
-                <tr key={crime.crime_id} className="hover:bg-gray-100">
-                  {" "}
-                  {/* Use crime.crime_id if that's the unique identifier */}
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {crime.Exact_Crime}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {crime.Location}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
-                    <button
-                      onClick={() => handleDelete(crime.crime_id)} // Ensure this matches your unique ID property
-                      className="bg-red-600 text-white py-1 px-3 rounded-lg shadow hover:bg-red-700 transition duration-150 ease-in-out"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-8">
+          {" "}
+          {/* Space between each crime record */}
+          {crimeData.map((crime) => (
+            <div
+              key={crime.crime_id}
+              className="p-6 bg-gray-50 border border-gray-200 rounded-lg shadow-lg"
+            >
+              <table className="min-w-full table-auto bg-white border border-gray-300">
+                <tbody>
+                  {crime.Type_of_Crime && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Type of Crime:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Type_of_Crime}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Exact_Crime && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Exact Crime:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Exact_Crime}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Date_of_Crime && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Date of Crime:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Date_of_Crime}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Time_of_Crime !== "00:00:00" && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Time of Crime:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Time_of_Crime}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Location && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Location:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Location}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Description && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Description:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Description}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Victim_Name && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Victim Name:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Victim_Name}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Victim_Contact && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Victim Contact:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Victim_Contact}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Reported_By && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Reported By:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Reported_By}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Arrest_Date && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Arrest Date:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Arrest_Date}
+                      </td>
+                    </tr>
+                  )}
+                  {crime.Case_Status && (
+                    <tr className="border-b border-gray-200">
+                      <td className="px-4 py-2 font-semibold text-gray-800">
+                        Case Status:
+                      </td>
+                      <td className="px-4 py-2 text-gray-600">
+                        {crime.Case_Status}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+
+              <div className="text-right mt-6">
+                <button
+                  onClick={() => handleDelete(crime.crime_id)}
+                  className="bg-red-600 text-white py-2 px-4 rounded-lg shadow hover:bg-red-700 transition duration-150 ease-in-out"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <div className="text-center text-gray-500 text-lg">

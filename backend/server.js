@@ -123,7 +123,8 @@ app.post("/UserHome", (req, res) => {
 
 app.get("/UserHome", (req, res) => {
   const id = req.query.id; // Use req.query to get the user ID from query parameters
-  const sql = "SELECT Exact_Crime, Location FROM Crime WHERE user_ID = ?";
+  const sql =
+    "SELECT crime_id, Type_of_Crime, Exact_Crime, Date_of_Crime, Time_of_Crime , Location , Description, Victim_Name, Victim_Contact, Reported_By, Arrest_Date, Case_Status FROM Crime WHERE user_ID = ?";
 
   db.query(sql, [id], (err, results) => {
     if (err) {
@@ -134,17 +135,16 @@ app.get("/UserHome", (req, res) => {
 });
 
 app.delete("/UserHome/:id", (req, res) => {
-  const crim_id = req.params.id; // Get the ID from the URL parameters
-  console.log(crim_id);
-  // Check if crim_id is provided
+  const crim_id = req.params.id;
   if (!crim_id) {
     return res.status(400).send("Crime ID is required.");
   }
 
-  const query = "DELETE FROM crimes WHERE crime_id = ?;";
+  const sql = "DELETE FROM Crime WHERE crime_id = ?;";
 
-  db.query(query, [crim_id], (err, result) => {
+  db.query(sql, [crim_id], (err, result) => {
     if (err) {
+      console.log(err);
       return res.status(500).send("Server Error: " + err);
     }
 
