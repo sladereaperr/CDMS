@@ -8,6 +8,7 @@ import Login from "./Pages/Login";
 import UserHome from "./Pages/User/UserHome";
 import NavBar from "./NavBar";
 import Updates from "./Pages/User/Updates";
+import Officer from "./Pages/Officer/Officer";
 import { useUser } from "./Pages/UserContext";
 
 const App = () => {
@@ -21,16 +22,22 @@ const App = () => {
         {user && <NavBar />}
 
         <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route
             path="/login"
             element={user ? <Navigate to="/UserHome" /> : <Login />}
           />
-          {/* {data && data.role === "User" && (
-            <> */}
-          <Route path="/UserHome" element={<UserHome />} />
-          <Route path="/Updates" element={<Updates />} />
-          {/* </>
-          )} */}
+          {data && data.role === "User" && (
+            <>
+              <Route path="/UserHome" element={<UserHome />} />
+              <Route path="/Updates" element={<Updates />} />
+            </>
+          )}
+          {data && data.role == "Officer" && (
+            <>
+              <Route path="/Officer" element={<Officer />} />
+            </>
+          )}
         </Routes>
       </div>
     </Router>

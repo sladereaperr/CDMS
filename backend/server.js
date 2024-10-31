@@ -192,6 +192,7 @@ app.put("/UserHome/:id", (req, res) => {
     }
   );
 });
+
 // app.get("/officer/:id", (req, res) => {
 //   const officerId = req.params.id; // Get officer ID from the request query
 

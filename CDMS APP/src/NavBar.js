@@ -41,9 +41,6 @@ const NavBar = () => {
             <Link to="/Officer" className="hover:text-gray-300">
               Home
             </Link>
-            <Link to="/User" className="hover:text-gray-300">
-              Add Crime
-            </Link>
           </>
         )}
       </div>

@@ -73,6 +73,7 @@ const AddComplaint = ({ onComplaintAdded }) => {
       ...prevData,
       [name]: value,
     }));
+    console.log(formData);
   };
 
   return (
