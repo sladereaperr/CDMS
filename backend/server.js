@@ -124,7 +124,7 @@ app.post("/UserHome", (req, res) => {
 app.get("/UserHome", (req, res) => {
   const id = req.query.id; // Use req.query to get the user ID from query parameters
   const sql =
-    "SELECT crime_id, Type_of_Crime, Exact_Crime, Date_of_Crime, Time_of_Crime , Location , Description, Victim_Name, Victim_Contact, Reported_By, Arrest_Date, Case_Status FROM Crime WHERE user_ID = ?";
+    "SELECT crime_id, Type_of_Crime, Exact_Crime, DATE(Date_of_Crime) AS Date_of_Crime, Time_of_Crime, Location, Description, Victim_Name, Victim_Contact, Reported_By, Arrest_Date, Case_Status FROM Crime WHERE user_ID = ?;";
 
   db.query(sql, [id], (err, results) => {
     if (err) {
@@ -156,6 +156,42 @@ app.delete("/UserHome/:id", (req, res) => {
   });
 });
 
+app.put("/UserHome/:id", (req, res) => {
+  const crim_id = req.params.id;
+  const {
+    Type_of_Crime,
+    Exact_Crime,
+    Date_of_Crime,
+    Time_of_Crime,
+    Location,
+    Victim_Name,
+    Victim_Contact,
+  } = req.body;
+  const sql =
+    "Update crime set Type_of_Crime = ?, Exact_Crime = ?, Date_of_Crime = ?, Time_of_Crime = ?, Location = ?, Victim_Name = ?, Victim_Contact = ? where crime_id = ?";
+
+  db.query(
+    sql,
+    [
+      Type_of_Crime,
+      Exact_Crime,
+      Date_of_Crime,
+      Time_of_Crime,
+      Location,
+      Victim_Name,
+      Victim_Contact,
+      crim_id,
+    ],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).send("Server Error:" + err);
+      }
+      console.log(result);
+      res.status(200).send({ message: "Crime record Updated Successfully" });
+    }
+  );
+});
 // app.get("/officer/:id", (req, res) => {
 //   const officerId = req.params.id; // Get officer ID from the request query
 
