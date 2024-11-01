@@ -193,6 +193,16 @@ app.put("/UserHome/:id", (req, res) => {
   );
 });
 
+app.get("/Officer", (req, res) => {
+  const sql = "Select * from Criminal order by name desc";
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.status(500).send("Server Error: " + err);
+    }
+    res.json(result);
+  });
+});
+
 // app.get("/officer/:id", (req, res) => {
 //   const officerId = req.params.id; // Get officer ID from the request query
 

@@ -41,6 +41,9 @@ const NavBar = () => {
             <Link to="/Officer" className="hover:text-gray-300">
               Home
             </Link>
+            <Link to="/Investigations" className="hover:text-gray-300">
+              Investigations
+            </Link>
           </>
         )}
       </div>

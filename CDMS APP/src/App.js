@@ -4,12 +4,13 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+import { useUser } from "./Pages/UserContext";
 import Login from "./Pages/Login";
 import UserHome from "./Pages/User/UserHome";
 import NavBar from "./NavBar";
 import Updates from "./Pages/User/Updates";
 import Officer from "./Pages/Officer/Officer";
-import { useUser } from "./Pages/UserContext";
+import Investigations from "./Pages/Officer/Investigations";
 
 const App = () => {
   // Safely parse and check user data from localStorage
@@ -27,15 +28,16 @@ const App = () => {
             path="/login"
             element={user ? <Navigate to="/UserHome" /> : <Login />}
           />
-          {data && data.role === "User" && (
+          {user && user.role === "User" && (
             <>
               <Route path="/UserHome" element={<UserHome />} />
               <Route path="/Updates" element={<Updates />} />
             </>
           )}
-          {data && data.role == "Officer" && (
+          {user && user.role === "Officer" && (
             <>
               <Route path="/Officer" element={<Officer />} />
+              <Route path="/Investigations" element={<Investigations />} />
             </>
           )}
         </Routes>
