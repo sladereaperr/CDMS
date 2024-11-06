@@ -9,7 +9,10 @@ Officer TABLE:
 officer_id | ranking    | badge_number | status   | assigned_cases
 
 User TABLE:
-user_id | username | password | first_name | last_name | email | phone_number | role | status | profile_picture | address | date_of_birth
+user_id | username | password |  email | phone_number | role | status
+
+UserProfile TABLE:
+user_id | first_name | last_name | phone_number | profile_picture | address | date_of_birth
 
 Evidence TABLE:
 evidence_id | crime_id | report_id | officer_id | evidence_type | collection_date     | storage_location            | description
@@ -35,33 +38,143 @@ const port = 3001;
 const cors = require("cors");
 app.use(cors());
 app.use(express.json());
+var fs = require("fs");
+var readline = require("readline");
 
 const sql_password = process.env.SQL_PASSWORD;
+const dbname = "CDMS";
 
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: sql_password,
-  database: "CDMS",
 });
+
+db.connect(function (err) {
+  if (err) {
+    console.error("Error connecting to MySQL:", err);
+    return;
+  }
+  console.log("Connected to MySQL");
+
+  checkDatabaseExists(dbname);
+});
+
+async function checkDatabaseExists(dbname) {
+  try {
+    // Query to check if the database exists in the information_schema
+    const results = await queryDatabase(
+      `SELECT COUNT(*) AS dbExists FROM information_schema.schemata WHERE schema_name = ?`,
+      [dbname]
+    );
+
+    const dbExists = results[0].dbExists > 0;
+
+    if (!dbExists) {
+      console.log("Database doesn't exist, creating it...");
+      await createDB(); // Create the database if it doesn't exist
+    } else {
+      console.log("Database already exists.");
+      // Now that the database exists, reconnect to it
+      db.changeUser({ database: dbname }, (err) => {
+        if (err) {
+          console.error("Error switching to the database:", err);
+        } else {
+          console.log(`Successfully switched to the ${dbname} database.`);
+        }
+      });
+    }
+  } catch (err) {
+    console.error("Error checking database:", err);
+  }
+}
+
+// Helper function to execute a query
+function queryDatabase(query, params) {
+  return new Promise((resolve, reject) => {
+    db.query(query, params, (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
+
+// Function to create the database and run the setup SQL script
+async function createDB() {
+  try {
+    // Create the database if it doesn't exist
+    await executeQuery(`CREATE DATABASE IF NOT EXISTS ${dbname}`);
+    console.log(`Database ${dbname} created successfully.`);
+
+    // Now switch to the new database
+    db.changeUser({ database: dbname }, (err) => {
+      if (err) {
+        console.error("Error switching to the new database:", err);
+      } else {
+        console.log(`Successfully switched to the ${dbname} database.`);
+      }
+    });
+
+    // Now execute the setup SQL script
+    const rl = readline.createInterface({
+      input: fs.createReadStream("./setup.sql"),
+      terminal: false,
+    });
+
+    let buffer = "";
+
+    for await (const chunk of rl) {
+      buffer += chunk;
+      if (buffer.trim().endsWith(";")) {
+        await executeQuery(buffer); // Ensure execution waits for completion
+        buffer = "";
+      }
+    }
+
+    if (buffer.trim()) {
+      await executeQuery(buffer); // In case the last part doesn't end with a semicolon
+    }
+
+    console.log("Finished reading and executing SQL file.");
+  } catch (err) {
+    console.error("Error reading or executing SQL file:", err);
+  }
+}
+
+// Function to execute a query
+function executeQuery(query) {
+  return new Promise((resolve, reject) => {
+    db.query(query, (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+}
 
 app.post("/login", (req, res) => {
   const { Username, Password } = req.body;
   const sql =
-    "select role, first_name, user_id from user where username = ? and password = ?";
+    "SELECT u.role, up.first_name, u.user_id FROM User u JOIN UserProfile up ON u.user_id = up.user_id WHERE u.username = ? AND u.password = ?;";
+
   db.query(sql, [Username, Password], (err, result) => {
     if (err) {
       return res.status(500).send("Server Error" + err);
     }
     if (result.length > 0) {
-      const user = result[0]; // Get the first user object
+      const user = result[0];
       res.json({
         role: user.role,
         firstName: user.first_name,
         id: user.user_id,
-      }); // Send only the necessary data
+      });
     } else {
-      res.json({ role: "", firstName: "", id: "" }); // Also return firstName as an empty string
+      res.json({ role: "", firstName: "", id: "" });
     }
   });
 });
@@ -187,7 +300,6 @@ app.put("/UserHome/:id", (req, res) => {
         console.log(err);
         return res.status(500).send("Server Error:" + err);
       }
-      console.log(result);
       res.status(200).send({ message: "Crime record Updated Successfully" });
     }
   );
@@ -202,36 +314,6 @@ app.get("/Officer", (req, res) => {
     res.json(result);
   });
 });
-
-// app.get("/officer/:id", (req, res) => {
-//   const officerId = req.params.id; // Get officer ID from the request query
-
-//   const crimesQuery = `
-//     SELECT * FROM Crime WHERE officer_ID = ?;
-//   `;
-//   const criminalsQuery = `
-//     SELECT * FROM Criminal;
-//   `;
-
-//   // Execute the two queries in parallel
-//   db.query(crimesQuery, [officerId], (err, crimesResults) => {
-//     if (err) {
-//       return res.status(500).json({ error: "Error fetching crimes" });
-//     }
-
-//     db.query(criminalsQuery, (err, criminalsResults) => {
-//       if (err) {
-//         return res.status(500).json({ error: "Error fetching criminals" });
-//       }
-
-//       // Return both results in one response
-//       res.json({
-//         crimes: crimesResults,
-//         criminals: criminalsResults,
-//       });
-//     });
-//   });
-// });
 
 app.listen(port, () => {
   console.log(`Server running on Port ${port}`);
