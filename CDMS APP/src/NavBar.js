@@ -28,11 +28,11 @@ const NavBar = () => {
       <div className="links space-x-4">
         {role === "User" && (
           <>
-            <Link to="/Updates" className="hover:text-gray-300">
-              Updates
-            </Link>
             <Link to="/UserHome" className="hover:text-gray-300">
               Home
+            </Link>
+            <Link to="/Updates" className="hover:text-gray-300">
+              Updates
             </Link>
           </>
         )}

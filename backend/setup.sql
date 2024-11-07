@@ -279,3 +279,4 @@ VALUES
 (108, 8, 8, 'Testimonial', '2023-09-18 03:30:00', 'Evidence Locker 8', 'Eyewitness testimony regarding armed robbery at a convenience store.'),
 (109, 9, 9, 'Photographic', '2023-10-01 08:45:00', 'Evidence Locker 9', 'Photograph of identity theft victim’s financial documents.'),
 (110, 10, 10, 'Handwritten', '2023-11-04 12:00:00', 'Evidence Locker 10', 'Handwritten notes found at the scene of the vandalism.');
+
