@@ -48,12 +48,11 @@ const ShowComplaint = ({ refresh, onDelete }) => {
       }
       try {
         const response = await api.get(`/UserHome?id=${id}`);
-        console.log(response.data);
         const formattedData = response.data.map((crime) => ({
           ...crime,
           Date_of_Crime: new Date(crime.Date_of_Crime).toLocaleDateString(
             "en-CA"
-          ), // Adjust this format as necessary
+          ),
         }));
         setCrimeData(formattedData);
       } catch (error) {
@@ -78,9 +77,9 @@ const ShowComplaint = ({ refresh, onDelete }) => {
   const handleUpdate = async (crimeId) => {
     try {
       const response = await api.put(`/UserHome/${crimeId}`, UpdatedDetails);
+      console.log(response);
       setEditCrimeId(null);
       onDelete();
-      console.log(response);
     } catch (err) {
       console.error("Error updating crime record:", err);
     }
@@ -92,7 +91,6 @@ const ShowComplaint = ({ refresh, onDelete }) => {
       ...prevDetails,
       [name]: value,
     }));
-    console.log(UpdatedDetails);
   };
 
   if (loading) {
@@ -102,7 +100,6 @@ const ShowComplaint = ({ refresh, onDelete }) => {
       </div>
     );
   }
-  console.log(UpdatedDetails);
 
   return (
     <div className="container mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
@@ -166,14 +163,6 @@ const ShowComplaint = ({ refresh, onDelete }) => {
                       </select>
                     </div>
                     <InputField
-                      label="Exact Crime"
-                      type="text"
-                      name="Exact_Crime"
-                      value={UpdatedDetails.Exact_Crime}
-                      handleChange={handleInputChange}
-                      required={true}
-                    />
-                    <InputField
                       label="Date of Crime"
                       type="date"
                       name="Date_of_Crime"
@@ -196,24 +185,6 @@ const ShowComplaint = ({ refresh, onDelete }) => {
                       type="text"
                       name="Location"
                       value={UpdatedDetails.Location}
-                      handleChange={handleInputChange}
-                      required={true}
-                    />
-
-                    <InputField
-                      label="Victim Name"
-                      type="text"
-                      name="Victim_Name"
-                      value={UpdatedDetails.Victim_Name}
-                      handleChange={handleInputChange}
-                      required={true}
-                    />
-
-                    <InputField
-                      label="Victim Contact"
-                      type="text"
-                      name="Victim_Contact"
-                      value={UpdatedDetails.Victim_Contact}
                       handleChange={handleInputChange}
                       required={true}
                     />

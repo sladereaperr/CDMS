@@ -151,7 +151,12 @@ VALUES
 (8, 'frank_blue', 'password234', 'frank.blue@example.com', 'Officer', 'Inactive'),
 (9, 'grace_red', 'password567', 'grace.red@example.com', 'User', 'Active'),
 (10, 'hannah_yellow', 'password890', 'hannah.yellow@example.com', 'Officer', 'Active'),
-(11, 'ian_purple', 'password123', 'ian.purple@example.com', 'HeadOfficer', 'Active');
+(11, 'ian_purple', 'password123', 'ian.purple@example.com', 'HeadOfficer', 'Active'),
+(12, 'lucy_brown', 'password1234', 'lucy.brown@example.com', 'Officer', 'Active'),
+(13, 'jack_black', 'password5678', 'jack.black@example.com', 'User', 'Active'),
+(14, 'olivia_white', 'password9012', 'olivia.white@example.com', 'Officer', 'Inactive'),
+(15, 'mike_green', 'password3456', 'mike.green@example.com', 'HeadOfficer', 'Active'),
+(16, 'susan_gray', 'password7890', 'susan.gray@example.com', 'User', 'Inactive');
 
 
 INSERT INTO UserProfile (user_id, first_name, last_name, phone_number, profile_picture, address, date_of_birth)
@@ -166,7 +171,12 @@ VALUES
 (8, 'Frank', 'Blue', '8901234567', 'profile8.jpg', '505 Redwood St', '1980-01-18'),
 (9, 'Grace', 'Red', '9012345678', 'profile9.jpg', '606 Fir St', '1991-12-14'),
 (10, 'Hannah', 'Yellow', '0123456789', 'profile10.jpg', '707 Spruce St', '1983-11-22'),
-(11, 'Ian', 'Purple', '1234987650', 'profile11.jpg', '808 Ash St', '1975-10-30');
+(11, 'Ian', 'Purple', '1234987650', 'profile11.jpg', '808 Ash St', '1975-10-30'),
+(12, 'Lucy', 'Brown', '3456789012', 'profile12.jpg', '123 Maple Ave', '1994-04-14'),
+(13, 'Jack', 'Black', '4567890123', 'profile13.jpg', '456 Birch Blvd', '1992-07-22'),
+(14, 'Olivia', 'White', '5678901234', 'profile14.jpg', '789 Oak Drive', '1990-11-03'),
+(15, 'Mike', 'Green', '6789012345', 'profile15.jpg', '123 Cedar Lane', '1985-02-19'),
+(16, 'Susan', 'Gray', '7890123456', 'profile16.jpg', '321 Pine Rd', '1988-09-15');
 
 
 INSERT INTO Officer (officer_id, ranking, badge_number, status)
@@ -181,7 +191,12 @@ VALUES
 (8, 'Detective', '0123H', 'Active'),
 (9, 'Captain', '4567I', 'Active'),
 (10, 'Inspector', '8901J', 'Inactive'),
-(11, 'Sergeant', '1357K', 'Active');
+(11, 'Sergeant', '1357K', 'Active'),
+(12, 'Lieutenant', '6789H', 'Active'),
+(13, 'Detective', '1234I', 'Inactive'),
+(14, 'Sergeant', '2345J', 'Active'),
+(15, 'Captain', '3456K', 'On Leave'),
+(16, 'Inspector', '4567L', 'Active');
 
 
 INSERT INTO Crime (crime_ID, officer_ID, user_ID, Type_of_Crime, Exact_Crime, Date_of_Crime, Time_of_Crime, Location, Description, Victim_Name, Victim_Contact, Reported_By, Arrest_Date, Case_Status)
@@ -195,7 +210,12 @@ VALUES
 (107, 7, 8, 'Public Order Crime', 'Shoplifting', '2023-08-10', '16:00:00', '234 Cedar St', 'Stolen goods from a supermarket.', 'Nancy Clark', '7890123456', 'Grace Red', '2023-08-12', 'Solved'),
 (108, 8, 9, 'Organized Crime', 'Armed Robbery', '2023-09-18', '03:30:00', '543 Oak St', 'Armed robbery in a convenience store.', 'George Wilson', '8901234567', 'Hannah Yellow', NULL, 'Under Investigation'),
 (109, 9, 10, 'White-Collar Crime', 'Identity Theft', '2023-10-01', '08:45:00', '678 Maple St', 'Suspected identity theft in financial transactions.', 'Linda Brown', '9012345678', 'Ian Purple', '2023-10-03', 'Under Investigation'),
-(110, 10, 11, 'Property Crime', 'Vandalism', '2023-11-04', '12:00:00', '890 Ash St', 'Damage to public property.', 'Jack Turner', '0123456789', 'John Doe', '2023-11-05', 'Under Investigation');
+(110, 10, 11, 'Property Crime', 'Vandalism', '2023-11-04', '12:00:00', '890 Ash St', 'Damage to public property.', 'Jack Turner', '0123456789', 'John Doe', '2023-11-05', 'Under Investigation'),
+(111, 12, 11, 'Property Crime', 'Vandalism', '2023-12-01', '16:00:00', '123 Birch St', 'Graffiti on a public building.', 'John Doe', '1234987650', 'Lucy Brown', NULL, 'Under Investigation'),
+(112, 13, 12, 'Drug-Related Crime', 'Possession', '2023-12-05', '20:15:00', '234 Oak St', 'Possession of narcotics.', 'Sarah Lee', '2345678901', 'Jack Black', NULL, 'Under Investigation'),
+(113, 14, 13, 'Violent Crime', 'Assault', '2023-12-10', '22:30:00', '345 Elm St', 'Assault in a bar.', 'Michael Green', '3456789012', 'Olivia White', NULL, 'Under Investigation'),
+(114, 15, 14, 'Property Crime', 'Burglary', '2023-12-12', '01:00:00', '456 Pine St', 'Breaking into a store.', 'Linda Brown', '4567890123', 'Mike Green', NULL, 'Under Investigation'),
+(115, 16, 15, 'Public Order Crime', 'Disturbance', '2023-12-15', '13:00:00', '567 Cedar St', 'Public disturbance reported.', 'Chris Black', '5678901234', 'Susan Gray', NULL, 'Under Investigation');
 
 INSERT INTO Criminal (crime_ID, Name, Date_of_Birth, Status, Gender, Height, Weight, Eye_Color, Hair_Color, Skin_Tone, Build, Tattoos, No_of_Tattoos, Blood_Type, Crime_Category, Convictions, Last_Known_Address, Warrant_Status, Phone_Number, Known_Email_Address)
 VALUES 
@@ -208,7 +228,12 @@ VALUES
 (107, 'Nancy Clark', '1995-06-30', 'Free', 'Female', 5.6, 145.0, 'Blue', 'Red', 'Light', 'Slim', 'No', 0, 'B-', 'Public Order Crime', 0, '234 Cedar St', 'Active', '7890123456', 'nancyc@gmail.com'),
 (108, 'George Wilson', '1980-12-01', 'Incarcerated', 'Male', 6.0, 175.3, 'Brown', 'Black', 'Dark', 'Stocky', 'Yes', 5, 'O+', 'Organized Crime', 3, '543 Oak St', 'Active', '8901234567', 'georgew@yahoo.com'),
 (109, 'Linda Brown', '1993-05-18', 'Free', 'Female', 5.4, 125.6, 'Green', 'Blonde', 'Light', 'Slim', 'No', 0, 'AB-', 'White-Collar Crime', 1, '678 Maple St', 'Inactive', '9012345678', 'lindab@outlook.com'),
-(110, 'Jack Turner', '1989-09-03', 'Incarcerated', 'Male', 6.2, 180.7, 'Brown', 'Brown', 'Medium', 'Athletic', 'Yes', 2, 'A-', 'Property Crime', 2, '890 Ash St', 'Active', '0123456789', 'jackt@gmail.com');
+(110, 'Jack Turner', '1989-09-03', 'Incarcerated', 'Male', 6.2, 180.7, 'Brown', 'Brown', 'Medium', 'Athletic', 'Yes', 2, 'A-', 'Property Crime', 2, '890 Ash St', 'Active', '0123456789', 'jackt@gmail.com'),
+(111, 'John Doe', '1987-05-21', 'Free', 'Male', 5.8, 170.5, 'Brown', 'Black', 'Medium', 'Athletic', 'No', 0, 'A-', 'Property Crime', 0, '123 Birch St', 'Active', '1234987650', 'johndoe@example.com'),
+(112, 'Sarah Lee', '1993-09-13', 'Free', 'Female', 5.5, 130.2, 'Green', 'Brown', 'Light', 'Slim', 'No', 0, 'B+', 'Drug-Related Crime', 0, '234 Oak St', 'Inactive', '2345678901', 'sarahlee@example.com'),
+(113, 'Michael Green', '1990-11-20', 'Free', 'Male', 6.0, 180.3, 'Blue', 'Blonde', 'Light', 'Muscular', 'Yes', 2, 'O-', 'Violent Crime', 1, '345 Elm St', 'Inactive', '3456789012', 'michaelgreen@example.com'),
+(114, 'Linda Brown', '1985-02-25', 'Free', 'Female', 5.4, 125.8, 'Brown', 'Black', 'Light', 'Slim', 'No', 0, 'A+', 'Property Crime', 0, '456 Pine St', 'Active', '4567890123', 'lindabrown@example.com'),
+(115, 'Chris Black', '1992-07-30', 'Free', 'Male', 5.9, 170.0, 'Hazel', 'Red', 'Medium', 'Lean', 'No', 0, 'B-', 'Public Order Crime', 0, '567 Cedar St', 'Active', '5678901234', 'chrisblack@example.com');
 
 
 INSERT INTO Commits_Crime (crime_id, criminal_id)
@@ -223,7 +248,12 @@ VALUES
 (108, 8),
 (109, 9),
 (110, 10),
-(101, 5);
+(101, 5),
+(111, 11),
+(112, 12),
+(113, 13),
+(114, 14),
+(115, 15);
 
 INSERT INTO Investigates (officer_ID, crime_ID)
 VALUES 
@@ -237,7 +267,12 @@ VALUES
 (8, 108),
 (9, 109),
 (10, 110),
-(1, 106);
+(1, 106),
+(12, 111),
+(13, 112),
+(14, 113),
+(15, 114),
+(16, 115);
 
 INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
 VALUES 
@@ -265,7 +300,13 @@ VALUES
 (8, 'Armed robbery report.', 'Details on armed robbery incident and victim statements.'),
 (9, 'Fraudulent transaction report.', 'Summary of the fraudulent activities and evidence.'),
 (10, 'Property damage report.', 'Summary of public property damage and investigative actions.'),
-(1, 'Report on crime scene processing.', 'Detailed analysis of the crime scene and evidence collection.');
+(11, 'Report on crime scene processing.', 'Detailed analysis of the crime scene and evidence collection.'),
+(12, 'Detailed report on vandalism.', 'Summary of the damage and suspects involved.'),
+(13, 'Detailed report on drug possession.', 'Report on evidence collected at the scene.'),
+(14, 'Assault report and witness statements.', 'Summary of the altercation and interviews.'),
+(15, 'Burglary report and stolen items.', 'Details of the items taken and investigation details.'),
+(16, 'Disturbance report and public safety actions.', 'Summary of the incident and crowd control measures.');
+
 
 INSERT INTO Evidence (crime_id, report_id, officer_id, evidence_type, collection_date, storage_location, description)
 VALUES 
@@ -278,5 +319,10 @@ VALUES
 (107, 7, 7, 'Electronic Device', '2023-08-10 16:00:00', 'Evidence Locker 7', 'Stolen laptop recovered from the supermarket theft incident.'),
 (108, 8, 8, 'Testimonial', '2023-09-18 03:30:00', 'Evidence Locker 8', 'Eyewitness testimony regarding armed robbery at a convenience store.'),
 (109, 9, 9, 'Photographic', '2023-10-01 08:45:00', 'Evidence Locker 9', 'Photograph of identity theft victim’s financial documents.'),
-(110, 10, 10, 'Handwritten', '2023-11-04 12:00:00', 'Evidence Locker 10', 'Handwritten notes found at the scene of the vandalism.');
+(110, 10, 10, 'Handwritten', '2023-11-04 12:00:00', 'Evidence Locker 10', 'Handwritten notes found at the scene of the vandalism.'),
+(111, 11, 11, 'Physical', '2023-12-01 10:30:00', 'Evidence Locker 11', 'A crowbar found at the scene of the break-in.'),
+(112, 12, 12, 'Photographic', '2023-12-05 09:15:00', 'Evidence Locker 12', 'Photograph of the drug stash found during the raid.'),
+(113, 13, 13, 'Video', '2023-12-07 14:20:00', 'Evidence Locker 13', 'Surveillance footage of the altercation at the bar.'),
+(114, 14, 14, 'Forensic', '2023-12-10 16:45:00', 'Evidence Locker 14', 'DNA analysis from a bloodstain found at the scene of the assault.'),
+(115, 15, 15, 'Biometric', '2023-12-12 13:00:00', 'Evidence Locker 15', 'Facial recognition data from a CCTV camera during the robbery.');
 

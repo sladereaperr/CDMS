@@ -6,7 +6,7 @@ Criminal TABLE:
 | criminal_id | crime_ID | Name | Date_of_Birth | Status | Gender | Height | Weight | Eye_Color | Hair_Color | Skin_Tone | Build | Tattoos | No_of_Tattoos | Blood_Type | Known_Aliases | Crime_Category | Convictions | Last_Known_Address | Warrant_Status | Phone_Number | Known_Email_Address   
 
 Officer TABLE:
-officer_id | ranking    | badge_number | status   | assigned_cases
+officer_id | ranking    | badge_number | status  
 
 User TABLE:
 user_id | username | password |  email | phone_number | role | status
@@ -153,12 +153,10 @@ const createDBProcedures = async () => {
       CREATE PROCEDURE InsertCrimeRecord (
           IN p_user_id INT,
           IN p_Type_of_Crime VARCHAR(50),
-          IN p_Exact_Crime VARCHAR(100),
           IN p_Date_of_Crime DATE,
           IN p_Time_of_Crime TIME,
           IN p_Location VARCHAR(255),
-          IN p_Victim_Name VARCHAR(255),
-          IN p_Victim_Contact VARCHAR(100)
+          IN p_Reported_By VARCHAR(50)
       )
       BEGIN
           INSERT INTO Crime (
@@ -167,14 +165,13 @@ const createDBProcedures = async () => {
               Reported_By, Arrest_Date, Case_Status
           ) 
           VALUES (
-              p_user_id, NULL, p_Type_of_Crime, p_Exact_Crime, p_Date_of_Crime, 
-              p_Time_of_Crime, p_Location, NULL, p_Victim_Name, p_Victim_Contact, 
-              NULL, NULL, NULL
+              p_user_id, NULL, p_Type_of_Crime, NULL, p_Date_of_Crime, 
+              p_Time_of_Crime, p_Location, NULL, NULL, NULL, 
+              p_Reported_By, NULL, NULL
           );
-          
+
           SELECT LAST_INSERT_ID() AS inserted_id;
-      END;
-      `;
+      END;`;
 
     // Execute the procedure creation
     await executeQuery(createProcedure);
@@ -413,28 +410,24 @@ app.post("/login", (req, res) => {
 app.post("/UserHome", (req, res) => {
   const {
     Type_of_Crime,
-    Exact_Crime,
     Date_of_Crime,
     Time_of_Crime,
     Location,
-    Victim_Name,
-    Victim_Contact,
     user_id,
+    Reported_by,
   } = req.body;
 
-  const sql = `CALL InsertCrimeRecord(?, ?, ?, ?, ?, ?, ?, ?);`;
+  const sql = `CALL InsertCrimeRecord(?, ?, ?, ?, ?, ?);`;
 
   db.query(
     sql,
     [
       user_id,
       Type_of_Crime,
-      Exact_Crime,
       Date_of_Crime,
       Time_of_Crime,
       Location,
-      Victim_Name,
-      Victim_Contact,
+      Reported_by,
     ],
     (err, result) => {
       if (err) {
@@ -527,6 +520,69 @@ app.get("/Officer", (req, res) => {
     }
     res.json(result);
   });
+});
+
+app.get("/Home", (req, res) => {
+  const sql =
+    "SELECT crime_id, Type_of_Crime, Exact_Crime, DATE(Date_of_Crime) AS Date_of_Crime, Time_of_Crime, Location, Description, Victim_Name, Victim_Contact, Reported_By, Arrest_Date, Case_Status FROM crime;";
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      res.status(500).send("Server Error:" + err);
+    }
+    res.json(result);
+  });
+});
+
+app.get("/Assign/Officer", (req, res) => {
+  const sql = "SELECT officer_id,ranking,badge_number ,status FROM officer;";
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      res.status(500).send("Server Error:" + err);
+    }
+    res.json(result);
+  });
+});
+
+app.get("/Assign/Investigates", (req, res) => {
+  const sql = "SELECT officer_ID, crime_ID FROM Investigates;";
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      res.status(500).send("Server Error:" + err);
+    }
+    res.json(result);
+  });
+});
+
+app.post("/Assign", async (req, res) => {
+  const { crime_id, officers } = req.body;
+  if (!crime_id || officers.length === 0) {
+    return res
+      .status(400)
+      .send("Please select a crime and at least one officer.");
+  }
+
+  const sql = `INSERT INTO investigations (officer_id, crime_id) VALUES ?`;
+  const values = officers.map((officer_id) => [officer_id, crime_id]);
+
+  try {
+    // Using promise-based query execution
+    await db.promise().query(sql, [values]);
+
+    // Send success response
+    console.log("Officers assigned successfully");
+    return res
+      .status(200)
+      .json({ success: true, message: "Officers assigned successfully." });
+  } catch (error) {
+    // Handle error
+    console.error("Error assigning officers:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Error assigning officers." });
+  }
 });
 
 app.listen(port, () => {

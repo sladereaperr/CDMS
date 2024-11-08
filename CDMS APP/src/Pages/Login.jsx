@@ -18,9 +18,13 @@ const Login = () => {
       if (response.data.role) {
         localStorage.setItem("user", JSON.stringify(response.data));
         setUser(response.data);
-        navigate(
-          response.data.role === "User" ? "/UserHome" : `/${response.data.role}`
-        );
+        if (response.data.role === "User") {
+          navigate("/UserHome");
+        } else if (response.data.role === "Officer") {
+          navigate("/Officer");
+        } else if (response.data.role === "HeadOfficer") {
+          navigate("/Home");
+        }
       } else {
         alert("Incorrect Login Details");
       }

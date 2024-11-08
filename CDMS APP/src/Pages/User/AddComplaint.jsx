@@ -29,34 +29,31 @@ const AddComplaint = ({ onComplaintAdded }) => {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     Type_of_Crime: "",
-    Exact_Crime: "",
     Date_of_Crime: "",
     Time_of_Crime: "",
     Location: "",
-    Victim_Name: "",
-    Victim_Contact: "",
     user_id: id,
+    Reported_by: user.name,
   });
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Set loading to true when submitting
     try {
       const response = await api.post("/UserHome", formData);
-      console.log(response.data);
-
+      console.log(response);
       // Notify parent component to refresh data
       onComplaintAdded();
 
       // Reset form after submission
       setFormData({
         Type_of_Crime: "",
-        Exact_Crime: "",
         Date_of_Crime: "",
         Time_of_Crime: "",
         Location: "",
-        Victim_Name: "",
-        Victim_Contact: "",
         user_id: id,
+        Reported_by: user.name,
       });
       setShowForm(false); // Hide the form after submission
     } catch (error) {
@@ -64,6 +61,8 @@ const AddComplaint = ({ onComplaintAdded }) => {
         "Error submitting form:",
         error.response ? error.response.data : error.message
       );
+    } finally {
+      setLoading(false); // Reset loading after request is done
     }
   };
 
@@ -73,7 +72,6 @@ const AddComplaint = ({ onComplaintAdded }) => {
       ...prevData,
       [name]: value,
     }));
-    console.log(formData);
   };
 
   return (
@@ -129,15 +127,6 @@ const AddComplaint = ({ onComplaintAdded }) => {
           </div>
 
           <InputField
-            label="Exact Crime"
-            type="text"
-            name="Exact_Crime"
-            value={formData.Exact_Crime}
-            handleChange={handleInputChange}
-            required={true}
-          />
-
-          <InputField
             label="Date of Crime"
             type="date"
             name="Date_of_Crime"
@@ -164,28 +153,11 @@ const AddComplaint = ({ onComplaintAdded }) => {
             required={true}
           />
 
-          <InputField
-            label="Victim Name"
-            type="text"
-            name="Victim_Name"
-            value={formData.Victim_Name}
-            handleChange={handleInputChange}
-            required={true}
-          />
-
-          <InputField
-            label="Victim Contact"
-            type="text"
-            name="Victim_Contact"
-            value={formData.Victim_Contact}
-            handleChange={handleInputChange}
-            required={true}
-          />
-
           <div>
             <input
               type="submit"
-              value="Submit Complaint"
+              value={loading ? "Submitting..." : "Submit Complaint"} // Change button text when loading
+              disabled={loading} // Disable button while loading
               className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg shadow hover:bg-indigo-700 transition duration-150 ease-in-out"
             />
           </div>

@@ -46,6 +46,16 @@ const NavBar = () => {
             </Link>
           </>
         )}
+        {role === "HeadOfficer" && (
+          <>
+            <Link to="/Home" className="hover:text-gray-300">
+              Home
+            </Link>
+            <Link to="/Assign" className="hover:text-gray-300">
+              Assign
+            </Link>
+          </>
+        )}
       </div>
 
       <div className="flex items-center space-x-4">
