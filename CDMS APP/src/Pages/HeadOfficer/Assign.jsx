@@ -21,9 +21,9 @@ const Assign = () => {
       });
 
       if (response.data.success) {
-        alert("Officers assigned successfully!");
+        console.log("Officers assigned successfully!");
       } else {
-        alert("Error assigning officers. Please try again.");
+        console.log("Error assigning officers. Please try again.");
       }
     } catch (error) {
       console.error("Error assigning officers:", error);
@@ -34,8 +34,8 @@ const Assign = () => {
   return (
     <>
       <CrimeRecords
-        selectedCrimes={selectedCrime}
-        setSelectedCrimes={setSelectedCrime}
+        selectedCrime={selectedCrime} // This is correct
+        setSelectedCrime={setSelectedCrime} // Change this to singular
       />
       <OfficerList setSelectedOfficers={setSelectedOfficers} />
 

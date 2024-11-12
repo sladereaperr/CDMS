@@ -564,7 +564,7 @@ app.post("/Assign", async (req, res) => {
       .send("Please select a crime and at least one officer.");
   }
 
-  const sql = `INSERT INTO investigations (officer_id, crime_id) VALUES ?`;
+  const sql = `INSERT INTO investigates (officer_id, crime_id) VALUES ?`;
   const values = officers.map((officer_id) => [officer_id, crime_id]);
 
   try {
