@@ -4,7 +4,7 @@ import { useUser } from "../UserContext";
 
 // Reusable input field component
 const InputField = ({ label, type, name, value, handleChange, required }) => (
-  <div>
+  <div className="mb-4">
     <label
       htmlFor={name}
       className="block text-sm font-medium text-gray-700 mb-2"
@@ -35,18 +35,15 @@ const AddComplaint = ({ onComplaintAdded }) => {
     user_id: id,
     Reported_by: user.name,
   });
-  const [loading, setLoading] = useState(false); // Add loading state
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when submitting
+    setLoading(true);
     try {
       const response = await api.post("/UserHome", formData);
       console.log(response);
-      // Notify parent component to refresh data
       onComplaintAdded();
-
-      // Reset form after submission
       setFormData({
         Type_of_Crime: "",
         Date_of_Crime: "",
@@ -55,14 +52,14 @@ const AddComplaint = ({ onComplaintAdded }) => {
         user_id: id,
         Reported_by: user.name,
       });
-      setShowForm(false); // Hide the form after submission
+      setShowForm(false);
     } catch (error) {
       console.error(
         "Error submitting form:",
         error.response ? error.response.data : error.message
       );
     } finally {
-      setLoading(false); // Reset loading after request is done
+      setLoading(false);
     }
   };
 
@@ -75,7 +72,7 @@ const AddComplaint = ({ onComplaintAdded }) => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-8 space-y-6">
       <button
         onClick={() => setShowForm(!showForm)}
         className="bg-indigo-600 text-white py-2 px-4 rounded-lg shadow hover:bg-indigo-700 transition duration-150 ease-in-out"
@@ -86,13 +83,12 @@ const AddComplaint = ({ onComplaintAdded }) => {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="mt-6 bg-white p-8 rounded-lg shadow-lg max-w-lg mx-auto space-y-4"
+          className="mt-6 bg-white p-8 rounded-lg shadow-lg max-w-lg mx-auto space-y-6"
         >
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
             New Complaint
           </h2>
 
-          {/* Crime Type */}
           <div>
             <label
               htmlFor="Type_of_Crime"
@@ -156,8 +152,8 @@ const AddComplaint = ({ onComplaintAdded }) => {
           <div>
             <input
               type="submit"
-              value={loading ? "Submitting..." : "Submit Complaint"} // Change button text when loading
-              disabled={loading} // Disable button while loading
+              value={loading ? "Submitting..." : "Submit Complaint"}
+              disabled={loading}
               className="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg shadow hover:bg-indigo-700 transition duration-150 ease-in-out"
             />
           </div>

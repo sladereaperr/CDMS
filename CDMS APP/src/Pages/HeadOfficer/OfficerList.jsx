@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../api/posts";
 
 const OfficerList = ({ setSelectedOfficers }) => {
-  const [FilteredOfficers, setFilteredOfficers] = useState([]);
   const [OfficerData, setOfficerData] = useState([]);
-  const [InvestigatesData, setInvestigatesData] = useState([]);
 
   const handleCheckboxChange = (officerId) => {
     setSelectedOfficers((prevSelected) => {
@@ -28,42 +26,8 @@ const OfficerList = ({ setSelectedOfficers }) => {
       }
     };
 
-    const fetchInvestigatesData = async () => {
-      try {
-        const response = await api.get("/Assign/Investigates");
-        setInvestigatesData(response.data); // State will update asynchronously
-      } catch (error) {
-        console.error("Error fetching investigates data:", error);
-      }
-    };
-
     fetchOfficerData();
-    fetchInvestigatesData();
   }, []); // Only run this effect once on component mount
-
-  // This effect will run when OfficerData or InvestigatesData updates
-  useEffect(() => {
-    if (OfficerData.length && InvestigatesData.length) {
-      // Create a map to count the number of cases assigned to each officer
-      const investigationCounts = InvestigatesData.reduce((acc, record) => {
-        acc[record.officer_id] = (acc[record.officer_id] || 0) + 1;
-        return acc;
-      }, {});
-
-      // Filter officers where the count of cases is 4 or less
-      const officersLessThan4Cases = OfficerData.filter((officer) => {
-        const caseCount = investigationCounts[officer.officer_id] || 0;
-        return caseCount <= 4; // Add officer only if they have 4 or fewer cases
-      });
-
-      const remainingofficers = officersLessThan4Cases.filter((officer) => {
-        return officer.status === "Active";
-      });
-
-      // Update the state with filtered officers
-      setFilteredOfficers(remainingofficers);
-    }
-  }, [OfficerData, InvestigatesData]);
 
   return (
     <div className="container mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
@@ -71,7 +35,7 @@ const OfficerList = ({ setSelectedOfficers }) => {
         Officer Records
       </h2>
 
-      {FilteredOfficers.length > 0 ? (
+      {OfficerData.length > 0 ? (
         <table className="min-w-full table-auto bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-100 border-b border-gray-300">
@@ -85,10 +49,13 @@ const OfficerList = ({ setSelectedOfficers }) => {
                 Badge Number
               </th>
               <th className="px-4 py-2 font-semibold text-gray-800">Status</th>
+              <th className="px-4 py-2 font-semibold text-gray-800">
+                Case Count
+              </th>
             </tr>
           </thead>
           <tbody>
-            {FilteredOfficers.map((officer) => (
+            {OfficerData.map((officer) => (
               <tr key={officer.officer_id} className="border-b border-gray-200">
                 <td className="px-4 py-2">
                   <input
@@ -105,6 +72,9 @@ const OfficerList = ({ setSelectedOfficers }) => {
                   {officer.badge_number}
                 </td>
                 <td className="px-4 py-2 text-gray-600">{officer.status}</td>
+                <td className="px-4 py-2 text-gray-600">
+                  {officer.case_count}
+                </td>
               </tr>
             ))}
           </tbody>

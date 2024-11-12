@@ -127,8 +127,11 @@ const CriminalsTable = ({ criminals }) => {
         </thead>
         <tbody>
           {currentCriminals.length > 0 ? (
-            currentCriminals.map((criminal) => (
-              <tr key={criminal.criminal_id} className="hover:bg-gray-100">
+            currentCriminals.map((criminal, index) => (
+              <tr
+                key={criminal.criminal_id || index}
+                className="hover:bg-gray-100"
+              >
                 <td className="py-2 px-4 border-b">{criminal.Name}</td>
                 <td className="py-2 px-4 border-b">{criminal.Date_of_Birth}</td>
                 <td className="py-2 px-4 border-b">{criminal.Status}</td>

@@ -9,7 +9,7 @@ const UserHome = () => {
   };
 
   return (
-    <div>
+    <div className="p-6 space-y-8">
       <ShowComplaint refresh={RefreshComponent} onDelete={onComplaintAdded} />
       <AddComplaint onComplaintAdded={onComplaintAdded} />
     </div>

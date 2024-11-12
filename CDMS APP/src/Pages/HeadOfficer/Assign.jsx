@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import CrimeRecords from "./CrimeRecords";
 import OfficerList from "./OfficerList";
-import api from "../../api/posts"; // Assuming you are using axios or similar for API calls
+import api from "../../api/posts";
 
 const Assign = () => {
   const [selectedCrime, setSelectedCrime] = useState(null); // Crime can only be one, so initialize as null

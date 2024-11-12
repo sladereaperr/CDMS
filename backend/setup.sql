@@ -17,7 +17,7 @@ Build VARCHAR(50),
 Tattoos ENUM('Yes', 'No'),
 No_of_Tattoos INT,
 Blood_Type ENUM('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'),
-Crime_Category VARCHAR(100),
+Crime_Category VARCHAR(255),
 Convictions INT DEFAULT 0,
 Last_Known_Address TEXT,
 Warrant_Status ENUM('Active', 'Inactive'),
@@ -137,7 +137,15 @@ alter table criminal add foreign key (crime_ID) references Crime(crime_ID);
 alter table crime add foreign key (officer_ID) references Officer(officer_ID);
 alter table crime add foreign key (user_ID) references User(user_ID);
 
+CREATE PROCEDURE InsertCrimeRecord (IN p_user_id INT,IN p_Type_of_Crime VARCHAR(50),IN p_Date_of_Crime DATE,IN p_Time_of_Crime TIME,IN p_Location VARCHAR(255),IN p_Reported_By VARCHAR(50)) BEGIN INSERT INTO Crime (user_id, officer_ID, Type_of_Crime, Exact_Crime, Date_of_Crime, Time_of_Crime, Location, Description, Victim_Name, Victim_Contact, Reported_By, Arrest_Date, Case_Status) VALUES (p_user_id, NULL, p_Type_of_Crime, NULL, p_Date_of_Crime, p_Time_of_Crime, p_Location, NULL, NULL, NULL, p_Reported_By, NULL, NULL); SELECT LAST_INSERT_ID() AS inserted_id; END;
 
+CREATE TRIGGER log_crime_insert AFTER INSERT ON Crime FOR EACH ROW BEGIN IF (NEW.crime_ID IS NOT NULL) THEN INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details) VALUES (NEW.user_id, 'INSERT', NOW(), 'Success', CONCAT('New Crime ID: ', NEW.crime_ID));END IF;END;
+
+CREATE TRIGGER log_crime_update AFTER UPDATE ON Crime FOR EACH ROW BEGIN IF (NEW.crime_ID IS NOT NULL) THEN INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details) VALUES (NEW.user_id, 'UPDATE', NOW(), 'Success', CONCAT('Updated Crime ID: ', NEW.crime_ID));END IF;END;
+
+CREATE TRIGGER log_crime_delete AFTER DELETE ON Crime FOR EACH ROW BEGIN IF (OLD.crime_ID IS NOT NULL) THEN INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details) VALUES (OLD.user_id, 'DELETE', NOW(), 'Success', CONCAT('Deleted Crime ID: ', OLD.crime_ID));END IF;END;
+
+CREATE FUNCTION InsertCriminal(p_Crime_ID INT,p_Name VARCHAR(255),p_Date_of_Birth DATE,p_Status VARCHAR(100),p_Gender VARCHAR(50),p_Height DECIMAL(5,2),p_Weight DECIMAL(5,2),p_Eye_Color VARCHAR(50),p_Hair_Color VARCHAR(50),p_Skin_Tone VARCHAR(50),p_Build VARCHAR(50),p_Tattoos TEXT,p_No_of_Tattoos INT,p_Blood_Type VARCHAR(10),p_Crime_Category VARCHAR(100),p_Convictions TEXT,p_Last_Known_Address TEXT,p_Warrant_Status VARCHAR(50),p_Phone_Number VARCHAR(20),p_Known_Email_Address VARCHAR(255)) RETURNS VARCHAR(255) DETERMINISTIC READS SQL DATA BEGIN INSERT INTO Criminal (Crime_ID, Name, Date_of_Birth, Status, Gender, Height, Weight, Eye_Color, Hair_Color, Skin_Tone, Build, Tattoos, No_of_Tattoos, Blood_Type, Crime_Category, Convictions, Last_Known_Address, Warrant_Status, Phone_Number, Known_Email_Address) VALUES ( p_Crime_ID, p_Name, p_Date_of_Birth, p_Status, p_Gender, p_Height, p_Weight, p_Eye_Color, p_Hair_Color, p_Skin_Tone, p_Build,p_Tattoos, p_No_of_Tattoos, p_Blood_Type, p_Crime_Category, p_Convictions, p_Last_Known_Address, p_Warrant_Status, p_Phone_Number, p_Known_Email_Address);RETURN 'Criminal record inserted successfully';END;
 
 INSERT INTO User (user_id, username, password, email, role, status)
 VALUES

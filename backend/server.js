@@ -138,239 +138,11 @@ async function createDB() {
       await executeQuery(buffer); // In case the last part doesn't end with a semicolon
     }
 
-    await createDBProcedures();
-    await createDBTriggers();
-
     console.log("Finished reading and executing SQL file.");
   } catch (err) {
     console.error("Error reading or executing SQL file:", err);
   }
 }
-
-const createDBProcedures = async () => {
-  try {
-    const createProcedure = `
-      CREATE PROCEDURE InsertCrimeRecord (
-          IN p_user_id INT,
-          IN p_Type_of_Crime VARCHAR(50),
-          IN p_Date_of_Crime DATE,
-          IN p_Time_of_Crime TIME,
-          IN p_Location VARCHAR(255),
-          IN p_Reported_By VARCHAR(50)
-      )
-      BEGIN
-          INSERT INTO Crime (
-              user_id, officer_ID, Type_of_Crime, Exact_Crime, Date_of_Crime, 
-              Time_of_Crime, Location, Description, Victim_Name, Victim_Contact, 
-              Reported_By, Arrest_Date, Case_Status
-          ) 
-          VALUES (
-              p_user_id, NULL, p_Type_of_Crime, NULL, p_Date_of_Crime, 
-              p_Time_of_Crime, p_Location, NULL, NULL, NULL, 
-              p_Reported_By, NULL, NULL
-          );
-
-          SELECT LAST_INSERT_ID() AS inserted_id;
-      END;`;
-
-    // Execute the procedure creation
-    await executeQuery(createProcedure);
-    console.log("Procedure created successfully");
-  } catch (err) {
-    console.error("Error:", err);
-  }
-};
-
-const createDBTriggers = async () => {
-  try {
-    const createInsertTriggerCrime = `
-      CREATE TRIGGER log_crime_insert
-      AFTER INSERT ON Crime
-      FOR EACH ROW
-      BEGIN
-          IF (NEW.crime_ID IS NOT NULL) THEN
-              INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-              VALUES (NEW.user_id, 
-                      'INSERT', 
-                      NOW(), 'Success', 
-                      CONCAT('New Crime ID: ', NEW.crime_ID));
-          END IF;
-      END;
-      `;
-
-    const createUpdateTriggerCrime = `
-      CREATE TRIGGER log_crime_update
-      AFTER UPDATE ON Crime
-      FOR EACH ROW
-      BEGIN
-          IF (NEW.crime_ID IS NOT NULL) THEN
-              INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-              VALUES (NEW.user_id, 
-                      'UPDATE', 
-                      NOW(), 'Success', 
-                      CONCAT('Updated Crime ID: ', NEW.crime_ID));
-          END IF;
-      END;
-      `;
-
-    const createDeleteTriggerCrime = `
-      CREATE TRIGGER log_crime_delete
-      AFTER DELETE ON Crime
-      FOR EACH ROW
-      BEGIN
-          IF (OLD.crime_ID IS NOT NULL) THEN
-              INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-              VALUES (OLD.user_id, 
-                      'DELETE', 
-                      NOW(), 'Success', 
-                      CONCAT('Deleted Crime ID: ', OLD.crime_ID));
-          END IF;
-      END;
-      `;
-
-    // const createInsertTriggerCriminal = `
-    //   CREATE TRIGGER log_criminal_insert
-    //   AFTER INSERT ON Criminal
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (NEW.criminal_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (NEW.user_id,
-    //                   'INSERT',
-    //                   NOW(), 'Success',
-    //                   CONCAT('New Criminal ID: ', NEW.criminal_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createUpdateTriggerCriminal = `
-    //   CREATE TRIGGER log_criminal_update
-    //   AFTER UPDATE ON Criminal
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (NEW.criminal_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (NEW.user_id,
-    //                   'UPDATE',
-    //                   NOW(), 'Success',
-    //                   CONCAT('Updated Criminal ID: ', NEW.criminal_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createDeleteTriggerCriminal = `
-    //   CREATE TRIGGER log_criminal_delete
-    //   AFTER DELETE ON Criminal
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (OLD.criminal_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (OLD.user_id,
-    //                   'DELETE',
-    //                   NOW(), 'Success',
-    //                   CONCAT('Deleted Criminal ID: ', OLD.criminal_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createInsertTriggerUser = `
-    //   CREATE TRIGGER log_user_insert
-    //   AFTER INSERT ON User
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (NEW.user_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (NEW.user_ID,
-    //                   'INSERT',
-    //                   NOW(), 'Success',
-    //                   CONCAT('New User ID: ', NEW.user_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createUpdateTriggerUser = `
-    //   CREATE TRIGGER log_user_update
-    //   AFTER UPDATE ON User
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (NEW.user_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (NEW.user_ID,
-    //                   'UPDATE',
-    //                   NOW(), 'Success',
-    //                   CONCAT('Updated User ID: ', NEW.user_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createDeleteTriggerUser = `
-    //   CREATE TRIGGER log_user_delete
-    //   AFTER DELETE ON User
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (OLD.user_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (OLD.user_ID,
-    //                   'DELETE',
-    //                   NOW(), 'Success',
-    //                   CONCAT('Deleted User ID: ', OLD.user_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createInsertTriggerEvidence = `
-    //   CREATE TRIGGER log_evidence_insert
-    //   AFTER INSERT ON Evidence
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (NEW.evidence_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (NEW.user_id,
-    //                   'INSERT',
-    //                   NOW(), 'Success',
-    //                   CONCAT('New Evidence ID: ', NEW.evidence_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createUpdateTriggerEvidence = `
-    //   CREATE TRIGGER log_evidence_update
-    //   AFTER UPDATE ON Evidence
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (NEW.evidence_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (NEW.user_id,
-    //                   'UPDATE',
-    //                   NOW(), 'Success',
-    //                   CONCAT('Updated Evidence ID: ', NEW.evidence_ID));
-    //       END IF;
-    //   END;`;
-
-    // const createDeleteTriggerEvidence = `
-    //   CREATE TRIGGER log_evidence_delete
-    //   AFTER DELETE ON Evidence
-    //   FOR EACH ROW
-    //   BEGIN
-    //       IF (OLD.evidence_ID IS NOT NULL) THEN
-    //           INSERT INTO AuditLog (user_id, action_type, action_timestamp, status, details)
-    //           VALUES (OLD.user_id,
-    //                   'DELETE',
-    //                   NOW(), 'Success',
-    //                   CONCAT('Deleted Evidence ID: ', OLD.evidence_ID));
-    //       END IF;
-    //   END;`;
-
-    // Execute the insert trigger creation
-    await executeQuery(createInsertTriggerCrime);
-    await executeQuery(createUpdateTriggerCrime);
-    await executeQuery(createDeleteTriggerCrime);
-    // await executeQuery(createInsertTriggerCriminal);
-    // await executeQuery(createUpdateTriggerCriminal);
-    // await executeQuery(createDeleteTriggerCriminal);
-    // await executeQuery(createInsertTriggerUser);
-    // await executeQuery(createUpdateTriggerUser);
-    // await executeQuery(createDeleteTriggerUser);
-    // await executeQuery(createInsertTriggerEvidence);
-    // await executeQuery(createUpdateTriggerEvidence);
-    // await executeQuery(createDeleteTriggerEvidence);
-  } catch (err) {
-    console.error("Error:", err);
-  }
-};
 
 // Function to execute a query
 function executeQuery(query) {
@@ -535,7 +307,8 @@ app.get("/Home", (req, res) => {
 });
 
 app.get("/Assign/Officer", (req, res) => {
-  const sql = "SELECT officer_id,ranking,badge_number ,status FROM officer;";
+  const sql =
+    "SELECT o.officer_id, o.ranking, o.badge_number, o.status, COUNT(i.officer_id) AS case_count FROM officer o LEFT JOIN investigates i ON o.officer_id = i.officer_id GROUP BY o.officer_id HAVING case_count <= 4 AND o.status = 'Active' LIMIT 0, 1000;";
 
   db.query(sql, (err, result) => {
     if (err) {
@@ -583,6 +356,114 @@ app.post("/Assign", async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error assigning officers." });
   }
+});
+
+app.get("/Investigations", (req, res) => {
+  const sql = "SELECT crime_ID FROM Investigates WHERE officer_ID = ?;";
+  const id = req.query.id;
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      res.status(500).send("Server Error:" + err);
+    }
+    res.json(result);
+  });
+});
+
+app.get("/Investigations/CrimeRec", (req, res) => {
+  const sql =
+    "SELECT c.crime_ID, c.Type_of_Crime, c.Exact_Crime, DATE(c.Date_of_Crime) AS Date_of_Crime, c.Time_of_Crime, c.Location, c.Description, c.Victim_Name, c.Victim_Contact, c.Reported_By, c.Arrest_Date, c.Case_Status FROM Crime c JOIN Investigates i ON c.crime_ID = i.crime_ID WHERE i.officer_ID = ?;";
+  const id = req.query.id;
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      res.status(500).send("Server Error:" + err);
+    }
+    res.json(result);
+  });
+});
+
+app.post("/Investigations", (req, res) => {
+  const {
+    Name,
+    Date_of_Birth,
+    Status,
+    Gender,
+    Height,
+    Weight,
+    Eye_Color,
+    Hair_Color,
+    Skin_Tone,
+    Build,
+    Tattoos,
+    No_of_Tattoos,
+    Blood_Type,
+    Crime_Category,
+    Convictions,
+    Last_Known_Address,
+    Warrant_Status,
+    Phone_Number,
+    Known_Email_Address,
+    Crime_ID,
+  } = req.body;
+
+  const insertCriminalSql =
+    "SELECT InsertCriminal(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+  // Insert into the Criminal table
+  db.query(
+    insertCriminalSql,
+    [
+      Crime_ID,
+      Name,
+      Date_of_Birth,
+      Status,
+      Gender,
+      Height,
+      Weight,
+      Eye_Color,
+      Hair_Color,
+      Skin_Tone,
+      Build,
+      Tattoos,
+      No_of_Tattoos,
+      Blood_Type,
+      Crime_Category,
+      Convictions,
+      Last_Known_Address,
+      Warrant_Status,
+      Phone_Number,
+      Known_Email_Address,
+    ],
+    (err, result) => {
+      if (err) {
+        return res.status(500).send("Server Error: " + err);
+      }
+
+      // Get the inserted criminal's ID (auto-incremented value)
+      const criminal_id = result.insertId;
+
+      // Now insert into commits_crime table using the criminal_id and Crime_ID
+      const insertCommitsCrimeSql =
+        "INSERT INTO commits_crime (crime_id, criminal_id) VALUES (?, ?);";
+
+      db.query(
+        insertCommitsCrimeSql,
+        [Crime_ID, criminal_id],
+        (err2, result2) => {
+          if (err2) {
+            return res
+              .status(500)
+              .send("Error inserting into commits_crime: " + err2);
+          }
+
+          res.json({
+            message:
+              "Crime record inserted successfully, and commits_crime updated",
+            criminal_id: criminal_id,
+          });
+        }
+      );
+    }
+  );
 });
 
 app.listen(port, () => {
