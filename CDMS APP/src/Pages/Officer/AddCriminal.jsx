@@ -153,7 +153,7 @@ const AddCriminal = () => {
               htmlFor="Crime_ID"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Select Investigation ID
+              Select Crime ID
             </label>
             {investigationIds && investigationIds.length > 0 ? (
               investigationIds.map((investigation) => (

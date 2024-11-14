@@ -110,7 +110,7 @@ CREATE TABLE Evidence (
     report_id INT,
     officer_id INT,
     evidence_type ENUM('Physical', 'Photographic', 'Video', 'Audio', 'Testimonial', 'Forensic', 'Biometric', 'Electronic Device', 'Handwritten'),
-    collection_date DATETIME NOT NULL,
+    collection_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     storage_location VARCHAR(255),
     description TEXT,
     foreign key (crime_id) references Crime(Crime_ID),	

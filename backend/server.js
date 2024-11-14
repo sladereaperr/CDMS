@@ -34,6 +34,7 @@ const express = require("express");
 const mysql = require("mysql2");
 require("dotenv").config();
 const app = express();
+const multer = require("multer");
 const port = 3001;
 const cors = require("cors");
 app.use(cors());
@@ -462,6 +463,51 @@ app.post("/Investigations", (req, res) => {
           });
         }
       );
+    }
+  );
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // Make sure this folder exists
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post("/evidence", upload.single("storage_location"), (req, res) => {
+  const { officer_id, evidence_type, description, crime_id } = req.body;
+  const storage_location = req.file ? req.file.path : null;
+  const collection_date = new Date(); // Or accept from the frontend if it's user-defined
+
+  // SQL query to insert data
+  const sql = `INSERT INTO Evidence (officer_id, evidence_type, collection_date, storage_location, description, crime_id)
+               VALUES (?, ?, ?, ?, ?, ?)`;
+
+  db.query(
+    sql,
+    [
+      officer_id,
+      evidence_type,
+      collection_date,
+      storage_location,
+      description,
+      crime_id,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting evidence:", err);
+        res.status(500).json({ error: "Error inserting evidence" });
+      } else {
+        res.status(200).json({
+          message: "Evidence added successfully!",
+          id: result.insertId,
+        });
+      }
     }
   );
 });
