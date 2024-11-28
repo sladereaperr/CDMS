@@ -64,7 +64,7 @@ const ShowComplaint = ({ refresh, onDelete }) => {
 
   const handleDelete = async (crimeId) => {
     try {
-      await api.delete(`/UserHome/${crimeId}`);
+      await api.delete("/UserHome", { params: { id: crimeId } });
       onDelete();
     } catch (error) {
       console.error("Error deleting crime record:", error);
@@ -90,6 +90,18 @@ const ShowComplaint = ({ refresh, onDelete }) => {
     }));
   };
 
+  const handleEditClick = (crime) => {
+    // Populate the UpdatedDetails with the current crime details
+    setUpdatedDetails({
+      Type_of_Crime: crime.Type_of_Crime || "",
+      Date_of_Crime: crime.Date_of_Crime || "",
+      Time_of_Crime: crime.Time_of_Crime || "",
+      Location: crime.Location || "",
+      user_id: id,
+    });
+    setEditCrimeId(crime.crime_id); // Enable edit mode for this crime
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -106,13 +118,16 @@ const ShowComplaint = ({ refresh, onDelete }) => {
         </div>
       ) : (
         crimeData.map((crime) => (
-          <div key={crime.id} className="bg-white p-6 rounded-lg shadow-md">
-            {editCrimeId === crime.id ? (
+          <div
+            key={crime.crime_id}
+            className="bg-white p-6 rounded-lg shadow-md"
+          >
+            {editCrimeId === crime.crime_id ? (
               <form
                 className="space-y-4"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  handleUpdate(crime.id);
+                  handleUpdate(crime.crime_id);
                 }}
               >
                 <h3 className="text-xl font-semibold mb-4">Edit Complaint</h3>
@@ -120,7 +135,7 @@ const ShowComplaint = ({ refresh, onDelete }) => {
                   label="Type of Crime"
                   type="text"
                   name="Type_of_Crime"
-                  value={UpdatedDetails.Type_of_Crime || crime.Type_of_Crime}
+                  value={UpdatedDetails.Type_of_Crime}
                   handleChange={handleInputChange}
                   required
                 />
@@ -128,7 +143,7 @@ const ShowComplaint = ({ refresh, onDelete }) => {
                   label="Date of Crime"
                   type="date"
                   name="Date_of_Crime"
-                  value={UpdatedDetails.Date_of_Crime || crime.Date_of_Crime}
+                  value={UpdatedDetails.Date_of_Crime}
                   handleChange={handleInputChange}
                   required
                 />
@@ -136,14 +151,14 @@ const ShowComplaint = ({ refresh, onDelete }) => {
                   label="Time of Crime"
                   type="time"
                   name="Time_of_Crime"
-                  value={UpdatedDetails.Time_of_Crime || crime.Time_of_Crime}
+                  value={UpdatedDetails.Time_of_Crime}
                   handleChange={handleInputChange}
                 />
                 <InputField
                   label="Location"
                   type="text"
                   name="Location"
-                  value={UpdatedDetails.Location || crime.Location}
+                  value={UpdatedDetails.Location}
                   handleChange={handleInputChange}
                   required
                 />
@@ -172,13 +187,13 @@ const ShowComplaint = ({ refresh, onDelete }) => {
                 <p className="text-gray-500">Location: {crime.Location}</p>
                 <div className="mt-4 flex space-x-4">
                   <button
-                    onClick={() => setEditCrimeId(crime.id)}
+                    onClick={() => handleEditClick(crime)}
                     className="bg-yellow-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-700 transition"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(crime.id)}
+                    onClick={() => handleDelete(crime.crime_id)}
                     className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition"
                   >
                     Delete

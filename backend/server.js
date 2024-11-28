@@ -227,8 +227,9 @@ app.get("/UserHome", (req, res) => {
   });
 });
 
-app.delete("/UserHome/:id", (req, res) => {
-  const crim_id = req.params.id;
+app.delete("/UserHome", (req, res) => {
+  const crim_id = req.query.id;
+  console.log(crim_id);
   if (!crim_id) {
     return res.status(400).send("Crime ID is required.");
   }
@@ -260,6 +261,7 @@ app.put("/UserHome/:id", (req, res) => {
     Victim_Name,
     Victim_Contact,
   } = req.body;
+
   const sql =
     "Update crime set Type_of_Crime = ?, Exact_Crime = ?, Date_of_Crime = ?, Time_of_Crime = ?, Location = ?, Victim_Name = ?, Victim_Contact = ? where crime_id = ?";
 
